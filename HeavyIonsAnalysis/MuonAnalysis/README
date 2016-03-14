@@ -1,0 +1,47 @@
+3.14.16, 10:40 am
+attempting barebones muon-dedicated tree in the exact same style as ggHiNTuplizer, no analysis related changes yet.
+
+2:19 pm
+Pieces from PhotonAnalysis copied to Muon analysis as demanded by headers+class inheritance. Contents of MuonAnalysis Folder was
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+[ilaflott@hidsk0001 MuonAnalysis]$ pwd
+/net/hisrv0001/home/ilaflott/HFDijet_Analysis_RunII/CMSSW_7_5_8_codeHere/src/HeavyIonsAnalysis/MuonAnalysis
+[ilaflott@hidsk0001 MuonAnalysis]$ ls *
+BuildFile.xml
+
+interface:
+HLTMuTree.h
+
+python:
+hltMuTree_cfi.py  hltMuTree_cfi.pyc  __init__.py  __init__.pyc
+
+src:
+HLTMuTree.cc
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Contents of MuonAnalysis folder is now:
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+[ilaflott@hidsk0001 MuonAnalysis]$ ls *
+BuildFile_new.xml  BuildFile_old.xml  BuildFile.xml  README  #README#  README~
+
+interface:
+ggHiNtuplizer_muTree.h  ggHiNtuplizer_muTree.h~
+
+plugins:
+ggHiNtuplizer_muTree.cc  ggHiNtuplizer_muTree.cc~
+
+python:
+ggHiNtuplizer_muTree_cfi.py  ggHiNtuplizer_muTree_cfi.py~  __init__.py  __init__.pyc
+
+src:
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
