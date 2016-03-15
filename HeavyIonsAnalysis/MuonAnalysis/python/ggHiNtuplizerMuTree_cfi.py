@@ -4,7 +4,7 @@ from HeavyIonsAnalysis.PhotonAnalysis.ElectronVID_cff import *
 
 ggHiNtuplizerMuTree = cms.EDAnalyzer(
     "ggHiNtuplizerMuTree",
-    doGenParticles     = cms.bool(True),
+    doGenParticles     = cms.bool(False),
     runOnParticleGun   = cms.bool(False),
     useValMapIso       = cms.bool(True),
     doElectronVID      = cms.bool(False),

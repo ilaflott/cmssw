@@ -34,6 +34,7 @@ class ggHiNtuplizerMuTree : public edm::EDAnalyzer {
 
    void fillGenParticles (const edm::Event&);
    void fillGenPileupInfo(const edm::Event&);
+
    void fillElectrons    (const edm::Event&, const edm::EventSetup&, math::XYZPoint& pv);
    void fillPhotons      (const edm::Event&, const edm::EventSetup&, math::XYZPoint& pv);
    void fillMuons        (const edm::Event&, const edm::EventSetup&, math::XYZPoint& pv);

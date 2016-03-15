@@ -7,9 +7,6 @@
 <use   name="DataFormats/Math"/>
 <use   name="PhysicsTools/UtilAlgos"/>
 <use   name="PhysicsTools/CandUtils"/>
-<use   name="FWCore/ServiceRegistry"/>
-<use   name="FWCore/Framework"/>
-<use   name="FWCore/ParameterSet"/>
 <use   name="DataFormats/Provenance"/>
 <use   name="DataFormats/BeamSpot"/>
 <use   name="DataFormats/L1GlobalTrigger"/>
@@ -23,9 +20,13 @@
 <use   name="Geometry/EcalAlgo"/>
 <use   name="RecoHI/HiEgammaAlgos"/>
 <use   name="DataFormats/HeavyIonEvent"/>
-<use   name="HeavyIonsAnalysis/PhotonAnalysis"/>
+<use   name="FWCore/ServiceRegistry"/>
+<use   name="FWCore/Framework"/>
+<use   name="FWCore/PluginManager"/>
+<use   name="FWCore/ParameterSet"/>
+<use   name="HeavyIonsAnalysis/MuonAnalysis"/>
 <use   name="CLHEP"/>
 <use   name="root"/>
-<flags   EDM_PLUGIN="1"/>
-<library   name="UserCodeDataAnalyzers_plugins" file="*.cc">
+<flags EDM_PLUGIN="1"/>
+<library name="MuonAnalysis" file="*.cc">
 </library>

@@ -6,12 +6,16 @@
 #include "DataFormats/Math/interface/deltaR.h"
 #include "EgammaAnalysis/ElectronTools/interface/SuperClusterHelper.h"
 
-#include "HeavyIonsAnalysis/PhotonAnalysis/src/pfIsoCalculator.h"
-#include "HeavyIonsAnalysis/PhotonAnalysis/interface/GenParticleParentage.h"
+//#include "HeavyIonsAnalysis/PhotonAnalysis/src/pfIsoCalculator.h"
+//#include "HeavyIonsAnalysis/PhotonAnalysis/interface/GenParticleParentage.h"
+#include "HeavyIonsAnalysis/MuonAnalysis/src/pfIsoCalculatorMuTree.h"
+#include "HeavyIonsAnalysis/MuonAnalysis/interface/GenParticleParentageMuTree.h"
+
 #include "HeavyIonsAnalysis/MuonAnalysis/interface/ggHiNtuplizerMuTree.h"
 
 
 using namespace std;
+//using namespace genpartparentage;
 
 ggHiNtuplizerMuTree::ggHiNtuplizerMuTree(const edm::ParameterSet& ps):
   effectiveAreas_( (ps.getParameter<edm::FileInPath>("effAreasConfigFile")).fullPath() )
@@ -778,7 +782,7 @@ void ggHiNtuplizerMuTree::fillGenParticles(const edm::Event& e)
 
     reco::GenParticleRef partRef = reco::GenParticleRef(
       genParticlesHandle, p - genParticlesHandle->begin());
-    genpartparentage::GenParticleParentage particleHistory(partRef);
+    genpartparentage::GenParticleParentageMuTree particleHistory(partRef);
 
     mcParentage_.push_back(particleHistory.hasLeptonParent()*16   +
 			   particleHistory.hasBosonParent()*8     +
@@ -805,7 +809,7 @@ void ggHiNtuplizerMuTree::fillGenParticles(const edm::Event& e)
 	momMass = momRef->mass();
 
 	// granny
-	genpartparentage::GenParticleParentage motherParticle(momRef);
+	genpartparentage::GenParticleParentageMuTree motherParticle(momRef);
 	if (motherParticle.hasRealParent()) {
 	  reco::GenParticleRef granny = motherParticle.parent();
 	  gmomPID = granny->pdgId();
@@ -985,7 +989,7 @@ void ggHiNtuplizerMuTree::fillElectrons(const edm::Event& e, const edm::EventSet
     elePFPUIso_          .push_back(pfIso.sumPUPt);
 
     //calculation on-fly
-    pfIsoCalculator pfIsoCal(e,es, pfCollection_, voronoiBkgPF_, pv);
+    pfIsoCalculatorMuTree pfIsoCal(e,es, pfCollection_, voronoiBkgPF_, pv);
     if (fabs(ele->superCluster()->eta()) > 1.566) {
       elePFChIso03_          .push_back(pfIsoCal.getPfIso(*ele, 1, 0.3, 0.015, 0.));
       elePFChIso04_          .push_back(pfIsoCal.getPfIso(*ele, 1, 0.4, 0.015, 0.));
@@ -1191,7 +1195,7 @@ void ggHiNtuplizerMuTree::fillPhotons(const edm::Event& e, const edm::EventSetup
 
     if(doPfIso_)
     {
-      pfIsoCalculator pfIso(e,es, pfCollection_, voronoiBkgPF_, pv);
+      pfIsoCalculatorMuTree pfIso(e,es, pfCollection_, voronoiBkgPF_, pv);
       // particle flow isolation
       pfcIso1.push_back( pfIso.getPfIso(*pho, 1, 0.1, 0.02, 0.0, 0 ));
       pfcIso2.push_back( pfIso.getPfIso(*pho, 1, 0.2, 0.02, 0.0, 0 ));

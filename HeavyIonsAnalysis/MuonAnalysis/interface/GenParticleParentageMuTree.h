@@ -1,5 +1,5 @@
-#ifndef __FSA_DATAALGOS_PHOTONPARENTAGE_H__
-#define __FSA_DATAALGOS_PHOTONPARENTAGE_H__
+#ifndef __FSA_DATAALGOS_MUONPARENTAGE_H__
+#define __FSA_DATAALGOS_MUONPARENTAGE_H__
 
 #include <DataFormats/Common/interface/Ref.h>
 #include <DataFormats/HepMCCandidate/interface/GenParticle.h>
@@ -9,9 +9,9 @@
 // the photon's provenance is determined.
 
 namespace genpartparentage {
-  class GenParticleParentage {
+  class GenParticleParentageMuTree {
   public:
-    GenParticleParentage(reco::GenParticleRef& );
+    GenParticleParentageMuTree(reco::GenParticleRef& );
     
     reco::GenParticleRef match() const {return _match;}
     
