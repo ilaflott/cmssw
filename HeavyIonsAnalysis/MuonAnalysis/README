@@ -1,3 +1,9 @@
+Basic ggHiNtuplizerMuTree compiles+runs as plug in w/ forest on pp AOD. 
+
+Proceeding to stripping extraneous info + customizing for dedicated muon tree.
+
+BuildFile.xml and plugins/BuildFile.xml both probably contain superfluous library dependencies, will fix at future time.
+
 Contents of MuonAnalysis folder is current (3/15/16, 2:30 pm):
 
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
