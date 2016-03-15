@@ -89,8 +89,6 @@ process.highPurityTracks = cms.EDFilter("TrackSelector",
                                         cut = cms.string('quality("highPurity")')
                                         )
 
-
-
 process.jetSequences = cms.Sequence(
     process.ak3PFJets +
     process.ak5PFJets +
