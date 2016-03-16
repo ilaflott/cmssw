@@ -1,10 +1,38 @@
+(3/16/16, 2:10 pm):
+
+ggHiNtuplizerMuTree stripped of electron, photon, pfIsoCalculatorMuTree, src folder, and BuildFile in HeavyIonsAnalysis/MuonAnalysis. gen particle isolation + fill routines in Ntuplizer, as well as parentage code kept for potential future applicaiton for now.
+
+compilation works and cmsRun tests on pp AOD show similar performance + no fatal errors. Proceeding to add in additional muon information.
+
+Contents of MuonAnalysis folder is currently:
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+[ilaflott@hexcms MuonAnalysis]$ ls *
+README
+
+interface:
+GenParticleParentageMuTree.h  ggHiNtuplizerMuTree.h
+
+plugins:
+BuildFile.xml  GenParticleParentageMuTree.cc  ggHiNtuplizerMuTree.cc
+
+python:
+ggHiNtuplizerMuTree_cfi.py  ggHiNtuplizerMuTree_cfi.pyc  __init__.py  __init__.pyc
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+(3/15/16, 2:30 pm):
+
 Basic ggHiNtuplizerMuTree compiles+runs as plug in w/ forest on pp AOD. 
 
 Proceeding to stripping extraneous info + customizing for dedicated muon tree.
 
 BuildFile.xml and plugins/BuildFile.xml both probably contain superfluous library dependencies, will fix at future time.
 
-Contents of MuonAnalysis folder is current (3/15/16, 2:30 pm):
+Contents of MuonAnalysis folder is currently:
 
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
