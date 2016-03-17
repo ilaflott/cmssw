@@ -1,3 +1,7 @@
+(3/16/16, 4:30 pm):
+
+Added quality, type, and selection flags. fill kinematic variables before skipping due to selection. added isSelected flag. variables cleared but branch declarations absent for the time being. header must be edited. unsure if pointer of reco::Vertex or math::XYZPoint being passed to fillMuons correctly. More Coding to follow, then Compiling + Debugging
+
 (3/16/16, 2:10 pm):
 
 ggHiNtuplizerMuTree stripped of electron, photon, pfIsoCalculatorMuTree, src folder, and BuildFile in HeavyIonsAnalysis/MuonAnalysis. gen particle isolation + fill routines in Ntuplizer, as well as parentage code kept for potential future applicaiton for now.

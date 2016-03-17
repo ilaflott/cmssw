@@ -95,7 +95,7 @@ ggHiNtuplizerMuTree::ggHiNtuplizerMuTree(const edm::ParameterSet& ps)//:
 
 } // constructor
 
-// tree fill routines
+// event analyzer
 
 void ggHiNtuplizerMuTree::analyze(const edm::Event& e, const edm::EventSetup& es)
 {
@@ -138,15 +138,38 @@ void ggHiNtuplizerMuTree::analyze(const edm::Event& e, const edm::EventSetup& es
   mcTrkIsoDR04_         .clear();
 
   //clean up muon stuff
-  nMu_ = 0;
+
+  //type flags
+  muType_               .clear();
+  muIsPF_               .clear();
+  muIsGlb_              .clear();
+  muIsInn_              .clear();
+  muIsSta_              .clear();
+  
+  //kinematics
   muPt_                 .clear();
   muEta_                .clear();
   muPhi_                .clear();
   muCharge_             .clear();
-  muType_               .clear();
+  
+  //muons looped over
+  nMu_ = 0;
+
+  muIsSelected_         .clear();
+
+  //mu quality
+  muIsLoose_            .clear();
+  muIsMedium_           .clear();
+  muIsTight_            .clear();
   muIsGood_             .clear();
+  //  muIsSoft_               .clear();
+  //  muIsHighPt_             .clear();
+
+  //best track info
   muD0_                 .clear();
   muDz_                 .clear();
+
+  //other track info
   muChi2NDF_            .clear();
   muInnerD0_            .clear();
   muInnerDz_            .clear();
@@ -156,12 +179,16 @@ void ggHiNtuplizerMuTree::analyze(const edm::Event& e, const edm::EventSetup& es
   muMuonHits_           .clear();
   muTrkQuality_         .clear();
   muStations_           .clear();
+
+  //isolation info
   muIsoTrk_             .clear();
   muPFChIso_            .clear();
   muPFPhoIso_           .clear();
   muPFNeuIso_           .clear();
   muPFPUIso_            .clear();
 
+  //selected muons looped over
+  nMuSel_ = 0;
   //done cleaning
 
   // MC truth
@@ -170,22 +197,32 @@ void ggHiNtuplizerMuTree::analyze(const edm::Event& e, const edm::EventSetup& es
     fillGenParticles(e);
   }
 
+  //void ggHiNtuplizerMuTree::analyze(const edm::Event& e, const edm::EventSetup& es)
+
   edm::Handle<vector<reco::Vertex> > vtxHandle;
   e.getByToken(vtxCollection_, vtxHandle);
 
-  // best-known primary vertex coordinates
-  math::XYZPoint pv(0, 0, 0);
+  reco::Vertex& vtx;
+  math::XYZPoint pv(0, 0, 0);  
+
+  // grab best primary vertex coordinates
   for (vector<reco::Vertex>::const_iterator v = vtxHandle->begin(); v != vtxHandle->end(); ++v)
     if (!v->isFake()) {
       pv.SetXYZ(v->x(), v->y(), v->z());
+      vtx = (reco::Vertex&) v;//attempting typecast of reco::vertex iterator, may not work
       break;
     }
 
-  fillMuons(e, es, pv);
+  //fillMuons(e, es, pv  ); //pv xyz coordinate version
+  fillMuons(e, es, (const) vtx, (const) pv ); //const vtx reference version, may not work
+  //does passing the es reference do anything for the routine? consider removing
+  //can i typecast the input to the fillmuons routine as a constant? may not work
 
   tree_->Fill();
+
 } // analyze
 
+// tree fill routines
 
 void ggHiNtuplizerMuTree::fillGenPileupInfo(const edm::Event& e)
 {
@@ -303,7 +340,8 @@ void ggHiNtuplizerMuTree::fillGenParticles(const edm::Event& e)
 
 }// fillGenParticles
 
-void ggHiNtuplizerMuTree::fillMuons(const edm::Event& e, const edm::EventSetup& es, math::XYZPoint& pv)
+//void ggHiNtuplizerMuTree::fillMuons(const edm::Event& e, const edm::EventSetup& es, 
+void ggHiNtuplizerMuTree::fillMuons(const edm::Event& e, const edm::EventSetup& es, const reco::Vertex& vtx, const math::XYZPoint& pv)
 {
   // Fills tree branches with reco muons.
 
@@ -311,47 +349,104 @@ void ggHiNtuplizerMuTree::fillMuons(const edm::Event& e, const edm::EventSetup& 
   e.getByToken(recoMuonsCollection_, recoMuonsHandle);
 
   for (edm::View<reco::Muon>::const_iterator mu = recoMuonsHandle->begin(); mu != recoMuonsHandle->end(); ++mu) {
-    if (mu->pt() < 5) continue;
-    if (!(mu->isPFMuon() || mu->isGlobalMuon() || mu->isTrackerMuon())) continue;
+    
+    // fill type + kinematic variables before seleciton happens for later evaluation
+    // type flags
+    muType_  .push_back( mu->type()             );// still not sure what this variable means
+    muIsPF_  .push_back( (int) mu->isPFMuon()         );
+    muIsGlb_ .push_back( (int) mu->isGlobalMuon()     );
+    muIsInn_ .push_back( (int) mu->isTrackerMuon()    );
+    muIsSta_ .push_back( (int) mu->isStandAloneMuon() );
 
-    std::cout << "hello world, I am in the muon loop" << std::endl;
+    //kinematics and charge
+    muPt_    .push_back( mu->pt()     );
+    muEta_   .push_back( mu->eta()    );
+    muPhi_   .push_back( mu->phi()    );
+    muCharge_.push_back( mu->charge() );
+    
+    nMu_++;//iterate total number of muons passed over
 
-    muPt_    .push_back(mu->pt());
-    muEta_   .push_back(mu->eta());
-    muPhi_   .push_back(mu->phi());
-    muCharge_.push_back(mu->charge());
-    muType_  .push_back(mu->type());
-    muIsGood_.push_back((int) muon::isGoodMuon(*mu, muon::selectionTypeFromString("TMOneStationTight")));
-    muD0_    .push_back(mu->muonBestTrack()->dxy(pv));
-    muDz_    .push_back(mu->muonBestTrack()->dz(pv));
+    //implement muon selection here
+    bool isSelected =  
+      ( mu->isPFMuon() || mu->isGlobalMuon() || mu->isTrackerMuon() || mu->isStandAlone() ) // type selection
+      && ( mu->pt()>0 ) ; // kinematic selection
+                         
+    muIsSelected_ .push_back( (int) isSelected );
+    
+    if( !muIsSelected ) continue; //if it doesn't meet the basic criteria, don't write the more computationally expensive info
+    else std::cout << "hello world, I have found a muon" << std::endl;
+    
+    ////////////////
+    // muon flags //
+    ////////////////
+    
+    // main quality selection flags
+    muIsLoose_   .push_back( (int) mu->isLooseMuon()  );
+    muIsMedium_  .push_back( (int) mu->isMediumMuon() );
+    muIsTight_   .push_back( (int) muon::isTightMuon(*mu, vtx)  );//needs a vertex input, see MuonSelectors.h, may not work
 
-    const reco::TrackRef glbMu = mu->globalTrack();
+    // secondary quality selection flags
+    muIsGood_   .push_back( (int) muon::isGoodMuon( *mu, muon::selectionTypeFromString("TMOneStationTight") ) );
+    //    muIsSoft_   .push_back( (int) mu->isSoftMuon()   );//needs a vertex input, see MuonSelectors.h
+    //    muIsHighPt_ .push_back( (int) mu->isHighPtMuon() );//needs a vertex input, see MuonSelectors.h
+      
+    /////////////////////////////
+    // track and other mu info //
+    /////////////////////////////
+
+    // best track impact parameters
+    const reco::TrackRef bestTrack = mu->muonBestTrack(); 
+      
+    muD0_ .push_back( bestTrack->dxy(pv) );
+    muDz_ .push_back( bestTrack->dz(pv)  );
+
+    //grab tracks associated with the muon
     const reco::TrackRef innMu = mu->innerTrack();
+    const reco::TrackRef staMu = mu->outerTrack();
+    const reco::TrackRef glbMu = mu->globalTrack();
 
-    if (glbMu.isNull()) {
-      muChi2NDF_ .push_back(-99);
-      muMuonHits_.push_back(-99);
-    } else {
-      muChi2NDF_.push_back(glbMu->normalizedChi2());
-      muMuonHits_.push_back(glbMu->hitPattern().numberOfValidMuonHits());
-    }
-
-    if (innMu.isNull()) {
+    int garbage;// temporary place holder for compilation + cmsRun tests
+    
+    // if no inner track, fill inner track variables with placeholders
+    if ( innMu.isNull() ) 
+      {
       muInnerD0_     .push_back(-99);
       muInnerDz_     .push_back(-99);
       muTrkLayers_   .push_back(-99);
       muPixelLayers_ .push_back(-99);
       muPixelHits_   .push_back(-99);
       muTrkQuality_  .push_back(-99);
-    } else {
-      muInnerD0_     .push_back(innMu->dxy(pv));
-      muInnerDz_     .push_back(innMu->dz(pv));
-      muTrkLayers_   .push_back(innMu->hitPattern().trackerLayersWithMeasurement());
-      muPixelLayers_ .push_back(innMu->hitPattern().pixelLayersWithMeasurement());
-      muPixelHits_   .push_back(innMu->hitPattern().numberOfValidPixelHits());
-      muTrkQuality_  .push_back(innMu->quality(reco::TrackBase::highPurity));
-    }
+      } else // innMu specific info
+      {
+      muInnerD0_     .push_back( innMu->dxy(pv)                                     );
+      muInnerDz_     .push_back( innMu->dz(pv)                                      );
+      muTrkLayers_   .push_back( innMu->hitPattern().trackerLayersWithMeasurement() );
+      muPixelLayers_ .push_back( innMu->hitPattern().pixelLayersWithMeasurement()   );
+      muPixelHits_   .push_back( innMu->hitPattern().numberOfValidPixelHits()       );
+      muTrkQuality_  .push_back( innMu->quality(reco::TrackBase::highPurity)        );
+      }
+    
+    // if no outer track, fill outer track variables with placeholders
+    if ( staMu.isNull() ) 
+      {
+	garbarge = 0; 
+      } else //staMu specific info, if anything
+      {
+	garbarge = 1; 
+      }
 
+    // if no global track, fill global track variables with placeholders
+    if ( glbMu.isNull() ) 
+      {
+      muChi2NDF_  .push_back(-99);
+      muMuonHits_ .push_back(-99);
+      } else // glbMu specific info
+      {
+      muChi2NDF_  .push_back( glbMu->normalizedChi2()                     );
+      muMuonHits_ .push_back( glbMu->hitPattern().numberOfValidMuonHits() );
+      }
+
+    //other info to keep
     muStations_ .push_back(mu->numberOfMatchedStations());
     muIsoTrk_   .push_back(mu->isolationR03().sumPt);
     muPFChIso_  .push_back(mu->pfIsolationR04().sumChargedHadronPt);
@@ -359,12 +454,15 @@ void ggHiNtuplizerMuTree::fillMuons(const edm::Event& e, const edm::EventSetup& 
     muPFNeuIso_ .push_back(mu->pfIsolationR04().sumNeutralHadronEt);
     muPFPUIso_  .push_back(mu->pfIsolationR04().sumPUPt);
 
-    nMu_++;
+    //iterate number of muons that pass selections
+    nMuSel_++;
   } // muons loop
 
 } //fillMuons
 
-//helper functions
+// end tree fill routines
+
+// helper functions
 
 float ggHiNtuplizerMuTree::getGenCalIso(edm::Handle<vector<reco::GenParticle> > &handle,
 				  reco::GenParticleCollection::const_iterator thisPart,
@@ -423,5 +521,7 @@ float ggHiNtuplizerMuTree::getGenTrkIso(edm::Handle<vector<reco::GenParticle> > 
 
   return ptSum;
 } // getGenTrkIso
+
+// end helper functions
 
 DEFINE_FWK_MODULE(ggHiNtuplizerMuTree);
