@@ -25,7 +25,10 @@ class ggHiNtuplizerMuTree : public edm::EDAnalyzer {
 
    virtual void analyze(const edm::Event&, const edm::EventSetup&);
 
-   void fillMuons        (const edm::Event&, const edm::EventSetup&, math::XYZPoint& pv);
+   //   void fillMuons        (const edm::Event&, const edm::EventSetup&, math::XYZPoint pv);
+   void fillMuons        (const edm::Event&, const edm::EventSetup&, const reco::Vertex& vtx, const math::XYZPoint& pv);
+   //   void fillMuons        (const edm::Event&, const edm::EventSetup&, const reco::Vertex&, const math::XYZPoint&);
+
    
    void fillGenParticles (const edm::Event&);
    void fillGenPileupInfo(const edm::Event&);
@@ -87,15 +90,38 @@ class ggHiNtuplizerMuTree : public edm::EDAnalyzer {
    vector<float>  mcTrkIsoDR04_;
 
    // reco::Muon
-   Int_t          nMu_;
-   vector<float>  muPt_;
-   vector<float>  muEta_;
-   vector<float>  muPhi_;
-   vector<int>    muCharge_;
-   vector<int>    muType_;
-   vector<int>    muIsGood_;
-   vector<float>  muD0_;
-   vector<float>  muDz_;
+
+   // order of appearance in fillMuons
+   //type flags
+   vector<int>  muType_           ;
+   vector<int>  muIsPF_           ;
+   vector<int>  muIsGlb_          ;
+   vector<int>  muIsInn_          ;
+   vector<int>  muIsSta_          ;
+
+   //kinematics
+   vector<float>   muPt_             ;
+   vector<float>   muEta_            ;
+   vector<float>   muPhi_            ;
+   vector<int>     muCharge_         ;
+
+   //muons looped over
+   Int_t nMu_ 	    ;
+
+   //selection+quality flags
+   vector<int>     muIsSelected_     ;
+   vector<int>     muIsLoose_        ;
+   vector<int>     muIsMedium_       ;
+   vector<int>     muIsTight_        ;
+   vector<int>     muIsGood_         ;
+   //  vector<int>     muIsSoft_       ;
+   //  vector<int>     muIsHighPt_     ;
+
+   //best track info
+   vector<float>   muD0_             ;
+   vector<float>   muDz_             ;
+
+   //other track info, inner, global, standalone, etc.
    vector<float>  muChi2NDF_;
    vector<float>  muInnerD0_;
    vector<float>  muInnerDz_;
@@ -105,11 +131,16 @@ class ggHiNtuplizerMuTree : public edm::EDAnalyzer {
    vector<int>    muMuonHits_;
    vector<int>    muTrkQuality_;
    vector<int>    muStations_;
+
+   //isolation info
    vector<float>  muIsoTrk_;
    vector<float>  muPFChIso_;
    vector<float>  muPFPhoIso_;
    vector<float>  muPFNeuIso_;
    vector<float>  muPFPUIso_;
+
+   //# selected muons
+   Int_t nMuSel_           ;
 
 };
 
