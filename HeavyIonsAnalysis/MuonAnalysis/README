@@ -1,3 +1,7 @@
+(3/17/16, 7:00 pm):
+
+More muon + track info added, reorganization done too. cleanUp routine part of class. Compilation + cmsRun tests all run as expected.
+
 (3/17/16, 4:10 pm):
 
 Quality, type, selection flags are declared and added to headers. fillMuons receives pointer to best-fit PV of the event for isTightMuon() calculation. Compilation + cmsRun tests on pp AOD Data perform as expected with no errors. Proceeding onto adding other track information + more tests.

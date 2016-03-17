@@ -7,12 +7,12 @@
 
 #include "HeavyIonsAnalysis/MuonAnalysis/interface/ggHiNtuplizerMuTree.h"
 
-
 using namespace std;
 //using namespace genpartparentage;
 
-ggHiNtuplizerMuTree::ggHiNtuplizerMuTree(const edm::ParameterSet& ps)//:
+ggHiNtuplizerMuTree::ggHiNtuplizerMuTree(const edm::ParameterSet& ps)
 {
+  // constructor for muon tree
 
   // class instance configuration
   doGenParticles_         = ps.getParameter<bool>("doGenParticles");
@@ -29,21 +29,21 @@ ggHiNtuplizerMuTree::ggHiNtuplizerMuTree(const edm::ParameterSet& ps)//:
 
   tree_ = fs->make<TTree>("EventTree", "Event data");
 
-  //event variables
+  //// event variables
   tree_->Branch("run",    &run_);
   tree_->Branch("event",  &event_);
   tree_->Branch("lumis",  &lumis_);
   tree_->Branch("isData", &isData_);
   
-  //mc variables
   if (doGenParticles_) {
-    //gen event pile up info
+    
+    //// PileupSummaryInfo
     tree_->Branch("nPUInfo",      &nPUInfo_);
     tree_->Branch("nPU",          &nPU_);
     tree_->Branch("puBX",         &puBX_);
     tree_->Branch("puTrue",       &puTrue_);
 
-    //gen particles
+    //// reco::GenParticle
     tree_->Branch("nMC",          &nMC_);
     tree_->Branch("mcPID",        &mcPID_);
     tree_->Branch("mcStatus",     &mcStatus_);
@@ -69,198 +69,233 @@ ggHiNtuplizerMuTree::ggHiNtuplizerMuTree(const edm::ParameterSet& ps)//:
     tree_->Branch("mcTrkIsoDR03", &mcTrkIsoDR03_);
     tree_->Branch("mcTrkIsoDR04", &mcTrkIsoDR04_);
   }
-  
-  //muon variables
-  //in order of appearance in fillMuons routine
 
+  //// reco::Muon
+  // by order of appearance in fillMuons  
+  
   //type flags
-  tree_->Branch("muType",                &muType_);
-  tree_->Branch("muIsPF",              &muIsPF_);
-  tree_->Branch("muIsGlb",              &muIsGlb_);
-  tree_->Branch("muIsInn",              &muIsInn_);
-  tree_->Branch("muIsSta",              &muIsSta_);
-  //kinematics
-  tree_->Branch("muPt",                  &muPt_);
-  tree_->Branch("muEta",                 &muEta_);
-  tree_->Branch("muPhi",                 &muPhi_);
-  tree_->Branch("muCharge",              &muCharge_);
-  //muons looped over
-  tree_->Branch("nMu",                   &nMu_);
-  //selection+quality variables
-  tree_->Branch("muIsSelected",              &muIsSelected_);
-  tree_->Branch("muIsLoose",              &muIsLoose_);
-  tree_->Branch("muIsMedium",              &muIsMedium_);
-  tree_->Branch("muIsTight",              &muIsTight_);
-  tree_->Branch("muIsGood",              &muIsGood_);
-  //tree_->Branch("muIsSoft",              &muIsSoft_);
-  //tree_->Branch("muIsHighPt",              &muIsHighPt_);
+  tree_->Branch( "muType"  , &muType_  );
+  tree_->Branch( "muIsPF"  , &muIsPF_  );
+  tree_->Branch( "muIsGlb" , &muIsGlb_ );
+  tree_->Branch( "muIsInn" , &muIsInn_ );
+  tree_->Branch( "muIsSta" , &muIsSta_ );
+
+  //kinematics and charge
+  tree_->Branch( "muPt"     , &muPt_     );
+  tree_->Branch( "muEta"    , &muEta_    );
+  tree_->Branch( "muPhi"    , &muPhi_    );
+  tree_->Branch( "muCharge" , &muCharge_ );
+
+  //# muons looped over
+  tree_->Branch( "nMu" , &nMu_ );
+
+  //selection+quality flags
+  tree_->Branch( "muIsSelected" , &muIsSelected_ );
+  tree_->Branch( "muIsLoose"    , &muIsLoose_    );
+  tree_->Branch( "muIsMedium"   , &muIsMedium_   );
+  tree_->Branch( "muIsTight"    , &muIsTight_    );
+  tree_->Branch( "muIsGood"     , &muIsGood_     );
+  tree_->Branch( "muIsSoft"     , &muIsSoft_     );
+  tree_->Branch( "muIsHighPt"   , &muIsHighPt_   );
+
+  //track references 
+  //must figure out valid way to write
 
   //best track info
-  tree_->Branch("muD0",                  &muD0_);
-  tree_->Branch("muDz",                  &muDz_);
+  tree_->Branch( "muBestTrkDxy"   , &muBestTrkDxy_   );
+  tree_->Branch( "muBestTrkDz"    , &muBestTrkDz_    );
+  tree_->Branch( "muBestTrkPt"    , &muBestTrkPt_    );
+  tree_->Branch( "muBestTrkPtErr" , &muBestTrkPtErr_ );
 
-  //other track info, inner, global, standalone, etc.
-  tree_->Branch("muChi2NDF",             &muChi2NDF_);
-  tree_->Branch("muInnerD0",             &muInnerD0_);
-  tree_->Branch("muInnerDz",             &muInnerDz_);
-  tree_->Branch("muTrkLayers",           &muTrkLayers_);
-  tree_->Branch("muPixelLayers",         &muPixelLayers_);
-  tree_->Branch("muPixelHits",           &muPixelHits_);
-  tree_->Branch("muMuonHits",            &muMuonHits_);
-  tree_->Branch("muTrkQuality",          &muTrkQuality_);
-  tree_->Branch("muStations",            &muStations_);
+  //inner track info  
+  tree_->Branch( "muInnerDxy"   , &muInnerDxy_    );
+  tree_->Branch( "muInnerDz"    , &muInnerDz_     );
+  tree_->Branch( "muTrkLayers"  , &muTrkLayers_   );
+  tree_->Branch( "muPixelLayers", &muPixelLayers_ );
+  tree_->Branch( "muPixelHits"  , &muPixelHits_   );
+  tree_->Branch( "muValidFrac"  , &muValidFrac_   );
+  tree_->Branch( "muTrkQuality" , &muTrkQuality_  );
+
+  //stand alone track info
+  //currently none
+
+  //global track info
+  tree_->Branch( "muChi2NDF"  , &muChi2NDF_  );
+  tree_->Branch( "muMuonHits" , &muMuonHits_ );
+
+  //other muon info
+  tree_->Branch( "muStations"     , &muStations_     );
+  tree_->Branch( "muSegCompat"    , &muSegCompat_    );
+  tree_->Branch( "muTrkKink"      , &muTrkKink_      );
+  tree_->Branch( "muChi2LocalPos" , &muChi2LocalPos_ );
 
   //isolation info
-  tree_->Branch("muIsoTrk",              &muIsoTrk_);
-  tree_->Branch("muPFChIso",             &muPFChIso_);
-  tree_->Branch("muPFPhoIso",            &muPFPhoIso_);
-  tree_->Branch("muPFNeuIso",            &muPFNeuIso_);
-  tree_->Branch("muPFPUIso",             &muPFPUIso_);
+  tree_->Branch( "muIsoTrk"   , &muIsoTrk_   );
+  tree_->Branch( "muPFChIso"  , &muPFChIso_  );
+  tree_->Branch( "muPFPhoIso" , &muPFPhoIso_ );
+  tree_->Branch( "muPFNeuIso" , &muPFNeuIso_ );
+  tree_->Branch( "muPFPUIso"  , &muPFPUIso_  );
 
   //# selected Muons
-  tree_->Branch("nMuSel",                   &nMuSel_);
-  //done declaring tree branches
+  tree_->Branch( "nMuSel" , &nMuSel_ );
 
-} // constructor
+} // end constructor
 
-// event analyzer
+// event routines
 
 void ggHiNtuplizerMuTree::analyze(const edm::Event& e, const edm::EventSetup& es)
 {
-  //clean up event stuff
+  // analyze event, called for every event
+
+  cleanUp(e, es); 
+
+  //// event variables
   run_    = e.id().run();
   event_  = e.id().event();
   lumis_  = e.luminosityBlock();
   isData_ = e.isRealData();
 
-  //clean up gen pileup stuff
-  nPUInfo_ = 0;
-  nPU_                  .clear();
-  puBX_                 .clear();
-  puTrue_               .clear();
-  
-  //clean up MC+gen particle stuff
-  nMC_ = 0;
-  mcPID_                .clear();
-  mcStatus_             .clear();
-  mcVtx_x_              .clear();
-  mcVtx_y_              .clear();
-  mcVtx_z_              .clear();
-  mcPt_                 .clear();
-  mcEta_                .clear();
-  mcPhi_                .clear();
-  mcE_                  .clear();
-  mcEt_                 .clear();
-  mcMass_               .clear();
-  mcParentage_          .clear();
-  mcMomPID_             .clear();
-  mcMomPt_              .clear();
-  mcMomEta_             .clear();
-  mcMomPhi_             .clear();
-  mcMomMass_            .clear();
-  mcGMomPID_            .clear();
-  mcIndex_              .clear();
-  mcCalIsoDR03_         .clear();
-  mcCalIsoDR04_         .clear();
-  mcTrkIsoDR03_         .clear();
-  mcTrkIsoDR04_         .clear();
-
-  //clean up muon stuff
-  //in order of appearance in fillMuons routine
-
-  //type flags
-  muType_               .clear();
-  muIsPF_               .clear();
-  muIsGlb_              .clear();
-  muIsInn_              .clear();
-  muIsSta_              .clear();
-
-  //kinematics
-  muPt_                 .clear();
-  muEta_                .clear();
-  muPhi_                .clear();
-  muCharge_             .clear();
-
-  //muons looped over
-  nMu_ = 0;
-
-  //selection+quality flags
-  muIsSelected_         .clear();
-  muIsLoose_            .clear();
-  muIsMedium_           .clear();
-  muIsTight_            .clear();
-  muIsGood_             .clear();
-  //  muIsSoft_               .clear();
-  //  muIsHighPt_             .clear();
-
-  //best track info
-  muD0_                 .clear();
-  muDz_                 .clear();
-
-  //other track info, inner, global, standalone, etc.
-  muChi2NDF_            .clear();
-  muInnerD0_            .clear();
-  muInnerDz_            .clear();
-  muTrkLayers_          .clear();
-  muPixelLayers_        .clear();
-  muPixelHits_          .clear();
-  muMuonHits_           .clear();
-  muTrkQuality_         .clear();
-  muStations_           .clear();
-
-  //isolation info
-  muIsoTrk_             .clear();
-  muPFChIso_            .clear();
-  muPFPhoIso_           .clear();
-  muPFNeuIso_           .clear();
-  muPFPUIso_            .clear();
-
-  //# selected Muons
-  nMuSel_ = 0;
-
-  // fill MC truth info
   if (doGenParticles_ && !isData_) {
     fillGenPileupInfo(e);
     fillGenParticles(e);
   }
 
+  reco::Vertex vtx;
+
   edm::Handle<vector<reco::Vertex> > vtxHandle;
   e.getByToken(vtxCollection_, vtxHandle);
 
-  reco::Vertex vtx;
-  math::XYZPoint pv(0, 0, 0);  
-
-  // grab best primary vertex coordinates
+  // grab best primary vertex
   for (vector<reco::Vertex>::const_iterator v = vtxHandle->begin(); v != vtxHandle->end(); ++v)
     if (!v->isFake()) {
-      pv.SetXYZ(v->x(), v->y(), v->z());
-      //      vtx = (reco::Vertex) v;//did not work
-      //      vtx = v;//did not work
-      vtx= *v; // so i can pass the best primary vertex to the fill muons routine
+      vtx= *v;
       break;
     }
 
-  //fillMuons(e, es, pv  ); //pv xyz coordinate version
-  fillMuons(e, es, (const reco::Vertex) vtx, (const math::XYZPoint) pv ); //const vtx reference version, may not work
-  //fillMuons(e, es, (const) vtx, (const) pv ); //const vtx reference version, may not work
+  fillMuons(e, es, (const reco::Vertex) vtx); 
 
   tree_->Fill();
 
 } // end analyze
 
-// tree fill routines
+void ggHiNtuplizerMuTree::cleanUp(const edm::Event& e, const edm::EventSetup& es)
+{
+  // clean up info possibly left behind so trees are not filled with garbage
 
+  //clean up gen pileup stuff
+  nPUInfo_ = 0;
+  nPU_    .clear();
+  puBX_   .clear();
+  puTrue_ .clear();
+  
+  //clean up MC+gen particle stuff
+  nMC_ = 0;
+  mcPID_        .clear();
+  mcStatus_     .clear();
+  mcVtx_x_      .clear();
+  mcVtx_y_      .clear();
+  mcVtx_z_      .clear();
+  mcPt_         .clear();
+  mcEta_        .clear();
+  mcPhi_        .clear();
+  mcE_          .clear();
+  mcEt_         .clear();
+  mcMass_       .clear();
+  mcParentage_  .clear();
+  mcMomPID_     .clear();
+  mcMomPt_      .clear();
+  mcMomEta_     .clear();
+  mcMomPhi_     .clear();
+  mcMomMass_    .clear();
+  mcGMomPID_    .clear();
+  mcIndex_      .clear();
+  mcCalIsoDR03_ .clear();
+  mcCalIsoDR04_ .clear();
+  mcTrkIsoDR03_ .clear();
+  mcTrkIsoDR04_ .clear();
+
+  //clean up muon stuff
+  // by order of appearance in fillMuons  
+
+  //type flags
+  muType_  .clear();
+  muIsPF_  .clear();
+  muIsGlb_ .clear();
+  muIsInn_ .clear();
+  muIsSta_ .clear();
+
+  //kinematics and charge
+  muPt_     .clear();
+  muEta_    .clear();
+  muPhi_    .clear();
+  muCharge_ .clear();
+
+  //muons looped over
+  nMu_ = 0;
+
+  //selection+quality flags
+  muIsSelected_ .clear();
+  muIsLoose_    .clear();
+  muIsMedium_   .clear();
+  muIsTight_    .clear();
+  muIsGood_     .clear();
+  muIsSoft_     .clear();
+  muIsHighPt_   .clear();
+
+  //best track info
+  muBestTrkDxy_   .clear();
+  muBestTrkDz_    .clear();
+  muBestTrkPt_    .clear();
+  muBestTrkPtErr_ .clear();
+
+  //inner track info
+  muInnerDxy_    .clear();
+  muInnerDz_     .clear();
+  muTrkLayers_   .clear();
+  muPixelLayers_ .clear();
+  muPixelHits_   .clear();
+  muValidFrac_   .clear();
+  muTrkQuality_  .clear();
+
+  //stand alone track info
+  //currently none
+  
+  //global track info
+  muChi2NDF_  .clear();
+  muMuonHits_ .clear();
+  
+  //other info
+  muStations_     .clear();
+  muSegCompat_    .clear();
+  muTrkKink_      .clear();
+  muChi2LocalPos_ .clear();
+
+  //isolation info
+  muIsoTrk_   .clear();
+  muPFChIso_  .clear();
+  muPFPhoIso_ .clear();
+  muPFNeuIso_ .clear();
+  muPFPUIso_  .clear();
+
+  //# selected Muons
+  nMuSel_ = 0;
+
+}// end cleanUp
+
+// end event routines
+
+// fill routines
 void ggHiNtuplizerMuTree::fillGenPileupInfo(const edm::Event& e)
 {
-  // Fills information about pileup from MC truth.
+  // Fills tree branches with generated pileup info
 
   edm::Handle<vector<PileupSummaryInfo> > genPileupHandle;
   e.getByToken(genPileupCollection_, genPileupHandle);
 
   for (vector<PileupSummaryInfo>::const_iterator pu = genPileupHandle->begin(); pu != genPileupHandle->end(); ++pu) {
-    nPU_   .push_back(pu->getPU_NumInteractions());
-    puTrue_.push_back(pu->getTrueNumInteractions());
-    puBX_  .push_back(pu->getBunchCrossing());
+    nPU_    .push_back( pu->getPU_NumInteractions()  );
+    puTrue_ .push_back( pu->getTrueNumInteractions() );
+    puBX_   .push_back( pu->getBunchCrossing()       );
 
     nPUInfo_++;
   }
@@ -269,7 +304,7 @@ void ggHiNtuplizerMuTree::fillGenPileupInfo(const edm::Event& e)
 
 void ggHiNtuplizerMuTree::fillGenParticles(const edm::Event& e)
 {
-  // Fills tree branches with generated particle info.
+  // Fills tree branches with generated particle info
 
   edm::Handle<vector<reco::GenParticle> > genParticlesHandle;
   e.getByToken(genParticlesCollection_, genParticlesHandle);
@@ -297,17 +332,17 @@ void ggHiNtuplizerMuTree::fillGenParticles(const edm::Event& e)
     if (!isStableFast && !isStableLepton && !isHeavy)
       continue;
 
-    mcPID_   .push_back(p->pdgId());
-    mcStatus_.push_back(p->status());
-    mcVtx_x_ .push_back(p->vx());
-    mcVtx_y_ .push_back(p->vy());
-    mcVtx_z_ .push_back(p->vz());
-    mcPt_    .push_back(p->pt());
-    mcEta_   .push_back(p->eta());
-    mcPhi_   .push_back(p->phi());
-    mcE_     .push_back(p->energy());
-    mcEt_    .push_back(p->et());
-    mcMass_  .push_back(p->mass());
+    mcPID_   .push_back( p->pdgId()  );
+    mcStatus_.push_back( p->status() );
+    mcVtx_x_ .push_back( p->vx()     );
+    mcVtx_y_ .push_back( p->vy()     );
+    mcVtx_z_ .push_back( p->vz()     );
+    mcPt_    .push_back( p->pt()     );
+    mcEta_   .push_back( p->eta()    );
+    mcPhi_   .push_back( p->phi()    );
+    mcE_     .push_back( p->energy() );
+    mcEt_    .push_back( p->et()     );
+    mcMass_  .push_back( p->mass()   );
 
     reco::GenParticleRef partRef = reco::GenParticleRef(
       genParticlesHandle, p - genParticlesHandle->begin());
@@ -346,19 +381,19 @@ void ggHiNtuplizerMuTree::fillGenParticles(const edm::Event& e)
       }
     }
 
-    mcMomPID_ .push_back(momPID);
-    mcMomPt_  .push_back(momPt);
-    mcMomEta_ .push_back(momEta);
-    mcMomPhi_ .push_back(momPhi);
-    mcMomMass_.push_back(momMass);
-    mcGMomPID_.push_back(gmomPID);
+    mcMomPID_  .push_back( momPID  );
+    mcMomPt_   .push_back( momPt   );
+    mcMomEta_  .push_back( momEta  );
+    mcMomPhi_  .push_back( momPhi  );
+    mcMomMass_ .push_back( momMass );
+    mcGMomPID_ .push_back( gmomPID );
 
-    mcIndex_  .push_back(genIndex - 1);
+    mcIndex_ .push_back( genIndex - 1 );
 
-    mcCalIsoDR03_.push_back(getGenCalIso(genParticlesHandle, p, 0.3, false, false));
-    mcCalIsoDR04_.push_back(getGenCalIso(genParticlesHandle, p, 0.4, false, false));
-    mcTrkIsoDR03_.push_back(getGenTrkIso(genParticlesHandle, p, 0.3) );
-    mcTrkIsoDR04_.push_back(getGenTrkIso(genParticlesHandle, p, 0.4) );
+    mcCalIsoDR03_ .push_back( getGenCalIso(genParticlesHandle, p, 0.3, false, false) );
+    mcCalIsoDR04_ .push_back( getGenCalIso(genParticlesHandle, p, 0.4, false, false) );
+    mcTrkIsoDR03_ .push_back( getGenTrkIso(genParticlesHandle, p, 0.3) );
+    mcTrkIsoDR04_ .push_back( getGenTrkIso(genParticlesHandle, p, 0.4) );
 
     nMC_++;
 
@@ -366,124 +401,127 @@ void ggHiNtuplizerMuTree::fillGenParticles(const edm::Event& e)
 
 }// end fillGenParticles
 
-//void ggHiNtuplizerMuTree::fillMuons(const edm::Event& e, const edm::EventSetup& es, math::XYZPoint& pv)
-void ggHiNtuplizerMuTree::fillMuons(const edm::Event& e, const edm::EventSetup& es, const reco::Vertex& vtx, const math::XYZPoint& pv)
+void ggHiNtuplizerMuTree::fillMuons(const edm::Event& e, const edm::EventSetup& es, const reco::Vertex& vtx)
 {
-  // Fills tree branches with reco muons.
+  // Fills tree branches with reconstructed muon info.
 
-  edm::Handle<edm::View<reco::Muon> > recoMuonsHandle;
-  e.getByToken(recoMuonsCollection_, recoMuonsHandle);
+  edm::Handle<edm::View<reco::Muon> > recoMuonsHandle ;
+  e.getByToken(recoMuonsCollection_, recoMuonsHandle) ;
 
+  math::XYZPoint pv(0, 0, 0);  
+  pv.SetXYZ(vtx.x(), vtx.y(), vtx.z());
+  
   for (edm::View<reco::Muon>::const_iterator mu = recoMuonsHandle->begin(); mu != recoMuonsHandle->end(); ++mu) {
     
-    // fill type + kinematic variables before seleciton happens for later evaluation
-    // type flags
-    muType_  .push_back( mu->type()             );// still not sure what this variable means
+    //type flags
+    muType_  .push_back( mu->type()                   );
     muIsPF_  .push_back( (int) mu->isPFMuon()         );
     muIsGlb_ .push_back( (int) mu->isGlobalMuon()     );
     muIsInn_ .push_back( (int) mu->isTrackerMuon()    );
     muIsSta_ .push_back( (int) mu->isStandAloneMuon() );
 
     //kinematics and charge
-    muPt_    .push_back( mu->pt()     );
-    muEta_   .push_back( mu->eta()    );
-    muPhi_   .push_back( mu->phi()    );
-    muCharge_.push_back( mu->charge() );
+    muPt_     .push_back( mu->pt()     );
+    muEta_    .push_back( mu->eta()    );
+    muPhi_    .push_back( mu->phi()    );
+    muCharge_ .push_back( mu->charge() );
     
-    nMu_++;//iterate total number of muons passed over
+    //# muons looped over
+    nMu_++;
 
-    //implement muon selection here
+    //implement muon selection
     bool isSelected =  
-      ( mu->isPFMuon() || mu->isGlobalMuon() || mu->isTrackerMuon() || mu->isStandAloneMuon() ) // type selection
-      && ( mu->pt()>0 ) ; // kinematic selection
+      ( mu->isPFMuon() || mu->isGlobalMuon() || mu->isTrackerMuon() || mu->isStandAloneMuon() )
+      && ( mu->pt()>0 ) ; 
                          
     muIsSelected_ .push_back( (int) isSelected );
     
-    if( !isSelected ) continue; //if it doesn't meet the basic criteria, don't write the more computationally expensive info
-    else std::cout << "hello world, I have found a muon" << std::endl;
-    
-    ////////////////
-    // muon flags //
-    ////////////////
-    
-    // main quality selection flags
-    muIsLoose_   .push_back( (int) muon::isLooseMuon(*mu ) );
-    muIsMedium_  .push_back( (int) muon::isMediumMuon(*mu ) );
-    muIsTight_   .push_back( (int) muon::isTightMuon(*mu, vtx)  );//needs a vertex input, see MuonSelectors.h, may not work
+    if( !isSelected ) continue; 
 
-    // secondary quality selection flags
-    muIsGood_   .push_back( (int) muon::isGoodMuon( *mu, muon::selectionTypeFromString("TMOneStationTight") ) );
-    //    muIsSoft_   .push_back( (int) mu->isSoftMuon()   );//needs a vertex input, see MuonSelectors.h
-    //    muIsHighPt_ .push_back( (int) mu->isHighPtMuon() );//needs a vertex input, see MuonSelectors.h
+    std::cout << "hello world, I have found a muon" << std::endl; /*debug*/
+    
+    //selection+quality flags 
+    muIsLoose_  .push_back( (int) muon::isLooseMuon(*mu )     );
+    muIsMedium_ .push_back( (int) muon::isMediumMuon(*mu )    );
+    muIsTight_  .push_back( (int) muon::isTightMuon(*mu, vtx) );
+
+    muIsGood_   .push_back( (int) muon::isGoodMuon(*mu, muon::selectionTypeFromString("TMOneStationTight")) );
+    muIsSoft_   .push_back( (int) muon::isSoftMuon(*mu, vtx)   );
+    muIsHighPt_ .push_back( (int) muon::isHighPtMuon(*mu, vtx) );
       
-    /////////////////////////////
-    // track and other mu info //
-    /////////////////////////////
-
-    // best track impact parameters
+    //grab track references associated with the muon
     const reco::TrackRef bestTrack = mu->muonBestTrack(); 
-      
-    muD0_ .push_back( bestTrack->dxy(pv) );
-    muDz_ .push_back( bestTrack->dz(pv)  );
-
-    //grab tracks associated with the muon
-    const reco::TrackRef innMu = mu->innerTrack();
-    const reco::TrackRef staMu = mu->outerTrack();
-    const reco::TrackRef glbMu = mu->globalTrack();
-
+    const reco::TrackRef innMu     = mu->innerTrack();
+    //    const reco::TrackRef staMu     = mu->outerTrack();
+    const reco::TrackRef glbMu     = mu->globalTrack();      
     
-    // if no inner track, fill inner track variables with placeholders
+    // best track info
+    muBestTrkDxy_   .push_back( bestTrack->dxy(pv)   );
+    muBestTrkDz_    .push_back( bestTrack->dz(pv)    );
+    muBestTrkPt_    .push_back( bestTrack->pt()      );
+    muBestTrkPtErr_ .push_back( bestTrack->ptError() );
+
+    // inner track info
     if ( innMu.isNull() ) 
       {
-      muInnerD0_     .push_back(-99);
-      muInnerDz_     .push_back(-99);
-      muTrkLayers_   .push_back(-99);
-      muPixelLayers_ .push_back(-99);
-      muPixelHits_   .push_back(-99);
-      muTrkQuality_  .push_back(-99);
-      } else // innMu specific info
+      muInnerDxy_    .push_back( -99 );
+      muInnerDz_     .push_back( -99 );
+      muTrkLayers_   .push_back( -99 );
+      muPixelLayers_ .push_back( -99 );
+      muPixelHits_   .push_back( -99 );
+      muValidFrac_   .push_back( -99 );
+      muTrkQuality_  .push_back( -99 );
+      } else
       {
-      muInnerD0_     .push_back( innMu->dxy(pv)                                     );
+      muInnerDxy_    .push_back( innMu->dxy(pv)                                     );
       muInnerDz_     .push_back( innMu->dz(pv)                                      );
       muTrkLayers_   .push_back( innMu->hitPattern().trackerLayersWithMeasurement() );
       muPixelLayers_ .push_back( innMu->hitPattern().pixelLayersWithMeasurement()   );
       muPixelHits_   .push_back( innMu->hitPattern().numberOfValidPixelHits()       );
+      muValidFrac_   .push_back( innMu->validFraction()                             );
       muTrkQuality_  .push_back( innMu->quality(reco::TrackBase::highPurity)        );
       }
 
-    // if no outer track, fill outer track variables with placeholders
-    if ( staMu.isNull() ) 
-      {
-	std::cout << std::endl << "staMu is null" << std::endl << std::endl;
-      } else //staMu specific info, if anything
-      {
-	std::cout << std::endl << "staMu is not null" << std::endl << std::endl;
-      }
+    // stand alone track info
+    //if ( staMu.isNull() ) 
+    //  {
+    //	std::cout << std::endl << "staMu is null" << std::endl << std::endl;
+    //  } else 
+    //  {
+    //	std::cout << std::endl << "staMu is not null" << std::endl << std::endl;
+    //  }
 
-    // if no global track, fill global track variables with placeholders
+    // global track info
     if ( glbMu.isNull() ) 
       {
-      muChi2NDF_  .push_back(-99);
-      muMuonHits_ .push_back(-99);
-      } else // glbMu specific info
+      muChi2NDF_  .push_back( -99 );
+      muMuonHits_ .push_back( -99 );
+      } else 
       {
       muChi2NDF_  .push_back( glbMu->normalizedChi2()                     );
       muMuonHits_ .push_back( glbMu->hitPattern().numberOfValidMuonHits() );
       }
 
     //other info to keep
-    muStations_ .push_back(mu->numberOfMatchedStations());
-    muIsoTrk_   .push_back(mu->isolationR03().sumPt);
-    muPFChIso_  .push_back(mu->pfIsolationR04().sumChargedHadronPt);
-    muPFPhoIso_ .push_back(mu->pfIsolationR04().sumPhotonEt);
-    muPFNeuIso_ .push_back(mu->pfIsolationR04().sumNeutralHadronEt);
-    muPFPUIso_  .push_back(mu->pfIsolationR04().sumPUPt);
+    muStations_     .push_back( mu->numberOfMatchedStations()           );
+    muSegCompat_    .push_back( muon::segmentCompatibility(*mu)         );
+    muTrkKink_      .push_back( mu->combinedQuality().trkKink           );
+    muChi2LocalPos_ .push_back( mu->combinedQuality().chi2LocalPosition );
 
-    //iterate number of muons that pass selections
+    //isolation info
+    muIsoTrk_   .push_back( mu->isolationR03().sumPt                );
+    muPFChIso_  .push_back( mu->pfIsolationR04().sumChargedHadronPt );
+    muPFPhoIso_ .push_back( mu->pfIsolationR04().sumPhotonEt        );
+    muPFNeuIso_ .push_back( mu->pfIsolationR04().sumNeutralHadronEt );
+    muPFPUIso_  .push_back( mu->pfIsolationR04().sumPUPt            );
+
+    //# selected muons
     nMuSel_++;
+
   } // muons loop
 
 } // end fillMuons
+
 // end tree fill routines
 
 // helper functions
@@ -491,7 +529,7 @@ float ggHiNtuplizerMuTree::getGenCalIso(edm::Handle<vector<reco::GenParticle> > 
 				  reco::GenParticleCollection::const_iterator thisPart,
 				  float dRMax, bool removeMu, bool removeNu)
 {
-  // Returns Et sum.
+  // Returns Et sum within a cone of dR < dRMax
 
   float etSum = 0;
 
@@ -522,7 +560,7 @@ float ggHiNtuplizerMuTree::getGenCalIso(edm::Handle<vector<reco::GenParticle> > 
 float ggHiNtuplizerMuTree::getGenTrkIso(edm::Handle<vector<reco::GenParticle> > &handle,
 				  reco::GenParticleCollection::const_iterator thisPart, float dRMax)
 {
-  // Returns pT sum without counting neutral particles.
+  // Returns pT sum without counting neutral particles within a cone of dR < dRMax
 
   float ptSum = 0;
 
@@ -544,6 +582,7 @@ float ggHiNtuplizerMuTree::getGenTrkIso(edm::Handle<vector<reco::GenParticle> > 
 
   return ptSum;
 } // end getGenTrkIso
+
 // end helper functions
 
 DEFINE_FWK_MODULE(ggHiNtuplizerMuTree);
