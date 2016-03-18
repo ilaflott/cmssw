@@ -1,5 +1,5 @@
-#ifndef ggHiNtuplizerMuTree_h
-#define ggHiNtuplizerMuTree_h
+#ifndef muonTree_h
+#define muonTree_h
 
 #include "TTree.h"
 
@@ -14,12 +14,12 @@
 
 using namespace std;
 
-class ggHiNtuplizerMuTree : public edm::EDAnalyzer {
+class muonTree : public edm::EDAnalyzer {
 
  public:
 
-   ggHiNtuplizerMuTree(const edm::ParameterSet&);
-   virtual ~ggHiNtuplizerMuTree() {};
+   muonTree(const edm::ParameterSet&);
+   virtual ~muonTree() {};
 
  private:
 

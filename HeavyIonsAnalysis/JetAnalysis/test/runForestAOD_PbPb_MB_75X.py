@@ -63,7 +63,7 @@ process.load("RecoHI.HiCentralityAlgos.CentralityBin_cfi")
 #####################################################################################
 
 process.TFileService = cms.Service("TFileService",
-                                   fileName=cms.string("HiForestAOD.root"))
+                                   fileName=cms.string("HiForestAOD_PbPb_MB.root"))
 
 #####################################################################################
 # Additional Reconstruction and Analysis: Main Body

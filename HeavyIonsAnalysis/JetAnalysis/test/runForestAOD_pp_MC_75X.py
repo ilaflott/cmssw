@@ -59,7 +59,7 @@ process = overrideJEC_pp5020(process)
 #####################################################################################
 
 process.TFileService = cms.Service("TFileService",
-                                   fileName=cms.string("HiForestAOD.root"))
+                                   fileName=cms.string("HiForestAOD_pp_MC.root"))
 
 #####################################################################################
 # Additional Reconstruction and Analysis: Main Body
@@ -124,10 +124,27 @@ process.ggHiNtuplizer.VtxLabel           = cms.InputTag("offlinePrimaryVertices"
 process.ggHiNtuplizer.particleFlowCollection = cms.InputTag("particleFlow")
 process.ggHiNtuplizer.doVsIso            = cms.bool(False)
 process.ggHiNtuplizer.doElectronVID      = cms.bool(True)
-process.ggHiNtuplizerGED = process.ggHiNtuplizer.clone(recoPhotonSrc = cms.InputTag('gedPhotons'),
-                                                       recoPhotonHiIsolationMap = cms.InputTag('photonIsolationHIProducerppGED'))
+#process.ggHiNtuplizerGED = process.ggHiNtuplizer.clone(recoPhotonSrc = cms.InputTag('gedPhotons'),
+#                                                       recoPhotonHiIsolationMap = cms.InputTag('photonIsolationHIProducerppGED'))
 
 ####################################################################################
+
+#####################
+# Muons
+#####################
+
+process.load('HeavyIonsAnalysis.MuonAnalysis.muonTree_cfi')
+process.muonTree.doGenParticles   = cms.bool(False)                
+process.muonTree.runOnParticleGun = cms.bool(False)                
+process.muonTree.pileupCollection = cms.InputTag("addPileupInfo")  
+process.muonTree.genParticleSrc   = cms.InputTag("genParticles")   
+process.muonTree.recoMuonSrc      = cms.InputTag("muons")          
+process.muonTree.VtxLabel  = cms.InputTag("offlinePrimaryVertices")
+##process.muonTree.beamSpot  = cms.InputTag("offlineBeamSpot")
+##process.muonTree.particleFlowCollection = cms.InputTag("particleFlow")
+
+####################################################################################
+
 #####################
 # Electron ID
 #####################
@@ -146,7 +163,6 @@ for idmod in my_id_modules:
     setupAllVIDIdsInModule(process,idmod,setupVIDElectronSelection)
 ####################################################################################
 
-
 #####################
 # tupel and necessary PAT sequences
 #####################
@@ -164,7 +180,8 @@ process.ana_step = cms.Path(process.hltanalysis *
                             process.jetSequences +
                             process.egmGsfElectronIDSequence + #Should be added in the path for VID module
                             process.ggHiNtuplizer +
-                            process.ggHiNtuplizerGED +
+#                            process.ggHiNtuplizerGED +
+                            process.muonTree +
                             process.pfcandAnalyzer +
                             process.HiForest +
 			    process.trackSequencesPP +

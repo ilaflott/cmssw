@@ -62,7 +62,7 @@ process.centralityBin.centralityVariable = cms.string("HFtowers")
 #####################################################################################
 
 process.TFileService = cms.Service("TFileService",
-                                   fileName=cms.string("HiForestAOD.root"))
+                                   fileName=cms.string("HiForestAOD_PbPb_DATA.root"))
 
 #####################################################################################
 # Additional Reconstruction and Analysis: Main Body
@@ -188,10 +188,24 @@ process.load('HeavyIonsAnalysis.JetAnalysis.TrkAnalyzers_cff')
 #####################
 process.load('HeavyIonsAnalysis.PhotonAnalysis.ggHiNtuplizer_cfi')
 process.ggHiNtuplizer.doGenParticles = False
-process.ggHiNtuplizerGED = process.ggHiNtuplizer.clone(recoPhotonSrc = cms.InputTag('gedPhotonsTmp'),
-                                                       recoPhotonHiIsolationMap = cms.InputTag('photonIsolationHIProducerGED')
-)
+#process.ggHiNtuplizerGED = process.ggHiNtuplizer.clone(recoPhotonSrc = cms.InputTag('gedPhotonsTmp'),
+#                                                       recoPhotonHiIsolationMap = cms.InputTag('photonIsolationHIProducerGED'))
 
+####################################################################################
+
+#####################
+# Muons
+#####################
+
+process.load('HeavyIonsAnalysis.MuonAnalysis.muonTree_cfi')
+process.muonTree.doGenParticles   = cms.bool(False)                
+process.muonTree.runOnParticleGun = cms.bool(False)                
+process.muonTree.pileupCollection = cms.InputTag("addPileupInfo")  
+process.muonTree.genParticleSrc   = cms.InputTag("genParticles")   
+process.muonTree.recoMuonSrc      = cms.InputTag("muons")          
+process.muonTree.VtxLabel  = cms.InputTag("offlinePrimaryVertices")
+##process.muonTree.beamSpot  = cms.InputTag("offlineBeamSpot")
+##process.muonTree.particleFlowCollection = cms.InputTag("particleFlow")
 
 ####################################################################################
 
@@ -213,7 +227,8 @@ process.ana_step = cms.Path(process.hltanalysis *
                             process.hiEvtAnalyzer*
                             process.jetSequences +
                             process.ggHiNtuplizer +
-                            process.ggHiNtuplizerGED +
+#                            process.ggHiNtuplizerGED +
+                            process.muonTree +
                             process.pfcandAnalyzer +
                             process.HiForest +
                             process.trackSequencesPbPb +

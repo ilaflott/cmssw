@@ -5,12 +5,12 @@
 
 #include "HeavyIonsAnalysis/MuonAnalysis/interface/GenParticleParentageMuTree.h"
 
-#include "HeavyIonsAnalysis/MuonAnalysis/interface/ggHiNtuplizerMuTree.h"
+#include "HeavyIonsAnalysis/MuonAnalysis/interface/muonTree.h"
 
 using namespace std;
 //using namespace genpartparentage;
 
-ggHiNtuplizerMuTree::ggHiNtuplizerMuTree(const edm::ParameterSet& ps)
+muonTree::muonTree(const edm::ParameterSet& ps)
 {
   // constructor for muon tree
 
@@ -143,7 +143,7 @@ ggHiNtuplizerMuTree::ggHiNtuplizerMuTree(const edm::ParameterSet& ps)
 
 // event routines
 
-void ggHiNtuplizerMuTree::analyze(const edm::Event& e, const edm::EventSetup& es)
+void muonTree::analyze(const edm::Event& e, const edm::EventSetup& es)
 {
   // analyze event, called for every event
 
@@ -178,7 +178,7 @@ void ggHiNtuplizerMuTree::analyze(const edm::Event& e, const edm::EventSetup& es
 
 } // end analyze
 
-void ggHiNtuplizerMuTree::cleanUp(const edm::Event& e, const edm::EventSetup& es)
+void muonTree::cleanUp(const edm::Event& e, const edm::EventSetup& es)
 {
   // clean up info possibly left behind so trees are not filled with garbage
 
@@ -285,7 +285,7 @@ void ggHiNtuplizerMuTree::cleanUp(const edm::Event& e, const edm::EventSetup& es
 // end event routines
 
 // fill routines
-void ggHiNtuplizerMuTree::fillGenPileupInfo(const edm::Event& e)
+void muonTree::fillGenPileupInfo(const edm::Event& e)
 {
   // Fills tree branches with generated pileup info
 
@@ -302,7 +302,7 @@ void ggHiNtuplizerMuTree::fillGenPileupInfo(const edm::Event& e)
 
 } // end fillGenPileupInfo
 
-void ggHiNtuplizerMuTree::fillGenParticles(const edm::Event& e)
+void muonTree::fillGenParticles(const edm::Event& e)
 {
   // Fills tree branches with generated particle info
 
@@ -401,7 +401,7 @@ void ggHiNtuplizerMuTree::fillGenParticles(const edm::Event& e)
 
 }// end fillGenParticles
 
-void ggHiNtuplizerMuTree::fillMuons(const edm::Event& e, const edm::EventSetup& es, const reco::Vertex& vtx)
+void muonTree::fillMuons(const edm::Event& e, const edm::EventSetup& es, const reco::Vertex& vtx)
 {
   // Fills tree branches with reconstructed muon info.
 
@@ -525,7 +525,7 @@ void ggHiNtuplizerMuTree::fillMuons(const edm::Event& e, const edm::EventSetup& 
 // end tree fill routines
 
 // helper functions
-float ggHiNtuplizerMuTree::getGenCalIso(edm::Handle<vector<reco::GenParticle> > &handle,
+float muonTree::getGenCalIso(edm::Handle<vector<reco::GenParticle> > &handle,
 				  reco::GenParticleCollection::const_iterator thisPart,
 				  float dRMax, bool removeMu, bool removeNu)
 {
@@ -557,7 +557,7 @@ float ggHiNtuplizerMuTree::getGenCalIso(edm::Handle<vector<reco::GenParticle> > 
   return etSum;
 } // end getGenCalIso
 
-float ggHiNtuplizerMuTree::getGenTrkIso(edm::Handle<vector<reco::GenParticle> > &handle,
+float muonTree::getGenTrkIso(edm::Handle<vector<reco::GenParticle> > &handle,
 				  reco::GenParticleCollection::const_iterator thisPart, float dRMax)
 {
   // Returns pT sum without counting neutral particles within a cone of dR < dRMax
@@ -585,4 +585,4 @@ float ggHiNtuplizerMuTree::getGenTrkIso(edm::Handle<vector<reco::GenParticle> > 
 
 // end helper functions
 
-DEFINE_FWK_MODULE(ggHiNtuplizerMuTree);
+DEFINE_FWK_MODULE(muonTree);

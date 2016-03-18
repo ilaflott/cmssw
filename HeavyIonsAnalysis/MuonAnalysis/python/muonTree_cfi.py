@@ -1,7 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 
-ggHiNtuplizerMuTree = cms.EDAnalyzer(
-    "ggHiNtuplizerMuTree",
+muonTree = cms.EDAnalyzer(
+    "muonTree",
     doGenParticles     = cms.bool(False),
     runOnParticleGun   = cms.bool(False),
     pileupCollection   = cms.InputTag("addPileupInfo"),

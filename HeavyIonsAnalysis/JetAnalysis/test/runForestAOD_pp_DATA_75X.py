@@ -34,7 +34,8 @@ process.source = cms.Source("PoolSource",
 
 # Number of events we want to process, -1 = all events
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(100))
+    input = cms.untracked.int32(10))
+#    input = cms.untracked.int32(-1))
 
 
 #####################################################################################
@@ -59,7 +60,7 @@ process = overrideJEC_pp5020(process)
 #####################################################################################
 
 process.TFileService = cms.Service("TFileService",
-                                   fileName=cms.string("HiForestAOD.root"))
+                                   fileName=cms.string("HiForestAOD_pp_DATA.root"))
 
 #####################################################################################
 # Additional Reconstruction and Analysis: Main Body
@@ -153,11 +154,15 @@ process.ggHiNtuplizer.doElectronVID = cms.bool(True)
 # Muons
 #####################
 
-process.load('HeavyIonsAnalysis.MuonAnalysis.ggHiNtuplizerMuTree_cfi')
-#process.ggHiNtuplizerMuTree.gsfElectronLabel   = cms.InputTag("gedGsfElectrons")
-#process.ggHiNtuplizerMuTree.recoPhotonHiIsolationMap = cms.InputTag('photonIsolationHIProducerpp')
-process.ggHiNtuplizerMuTree.VtxLabel  = cms.InputTag("offlinePrimaryVertices")
-#process.ggHiNtuplizerMuTree.particleFlowCollection = cms.InputTag("particleFlow")
+process.load('HeavyIonsAnalysis.MuonAnalysis.muonTree_cfi')
+process.muonTree.doGenParticles   = cms.bool(False)                
+process.muonTree.runOnParticleGun = cms.bool(False)                
+process.muonTree.pileupCollection = cms.InputTag("addPileupInfo")  
+process.muonTree.genParticleSrc   = cms.InputTag("genParticles")   
+process.muonTree.recoMuonSrc      = cms.InputTag("muons")          
+process.muonTree.VtxLabel  = cms.InputTag("offlinePrimaryVertices")
+##process.muonTree.beamSpot  = cms.InputTag("offlineBeamSpot")
+##process.muonTree.particleFlowCollection = cms.InputTag("particleFlow")
 
 ####################################################################################
 
@@ -198,9 +203,9 @@ process.ana_step = cms.Path(process.hltanalysis *
                             process.hiEvtAnalyzer *
                             process.jetSequences +
                             process.egmGsfElectronIDSequence + #Should be added in the path for VID module
-                            process.ggHiNtuplizerMuTree +
                             process.ggHiNtuplizer +
 #                            process.ggHiNtuplizerGED +
+                            process.muonTree +
                             process.pfcandAnalyzer +
                             process.HiForest +
                             process.trackSequencesPP +
