@@ -4,6 +4,24 @@ renamed plugin (ggHiNtuplizerMuTree -> muonTree), changed runForest scripts to e
 
 thought: change genParticles field to genMuons field? I.e., instead of doing all gen particles, only do muons + their mothers/daughters? Putting a pause on this thought for now, but i imagine this could be useful for later id of types of muons (dimuon, single muon, etc.). 
 
+Contents of MuonAnalysis folder is currently:
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+[ilaflott@hexcms MuonAnalysis]$ ls *
+README
+
+interface:
+GenParticleParentageMuTree.h  muonTree.h
+
+plugins:
+BuildFile.xml  GenParticleParentageMuTree.cc  muonTree.cc
+
+python:
+__init__.py  __init__.pyc  muonTree_cfi.py  muonTree_cfi.pyc
+
+
 (3/17/16, 7:00 pm):
 
 More muon + track info added, reorganization done too. cleanUp routine part of class. Compilation + cmsRun tests all run as expected.
