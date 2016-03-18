@@ -1,6 +1,6 @@
 (3/18/16, 3:00 pm):
 
-renamed plugin (ggHiNtuplizerMuTree -> muonTree), changed runForest scripts to explicitly include default values of inputTag fields, changed runForest script output root file title, changed all maxEvent fields to 10 for brevity of cmsRun test, added muonTree-specific runtest file in HeavyIonsAnalysis/JetAnalysis/test. Initial compilation+cmsRun tests on AOD seem normal (pp DATA, pp MC, PbPb Data, not PbPb MB nor PbPb MIX {note to self, MB and MIX are MC}).
+renamed plugin (ggHiNtuplizerMuTree -> muonTree), changed runForest scripts to explicitly include default values of inputTag fields, changed runForest script output root file title, changed all maxEvent fields to 10 for brevity of cmsRun test, added muonTree-specific runtest file in HeavyIonsAnalysis/JetAnalysis/test. Initial compilation+cmsRun tests on AOD seem normal (pp DATA, pp MC, PbPb Data, not PbPb MB nor PbPb MIX {note to self, MB and MIX are MC}). for the cmsRun test log files, see HeavyIonsAnalysis/JetAnalysis/test.
 
 thought: change genParticles field to genMuons field? I.e., instead of doing all gen particles, only do muons + their mothers/daughters? Putting a pause on this thought for now, but i imagine this could be useful for later id of types of muons (dimuon, single muon, etc.). 
 
