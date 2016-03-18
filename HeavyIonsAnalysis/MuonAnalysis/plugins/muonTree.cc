@@ -338,7 +338,7 @@ void muonTree::fillGenParticles(const edm::Event& e)
     mcVtx_y_ .push_back( p->vy()     );
     mcVtx_z_ .push_back( p->vz()     );
     mcPt_    .push_back( p->pt()     );
-    mcEta_   .push_back( p->eta()    );
+    mcEta_   .push_back( p->et()    );
     mcPhi_   .push_back( p->phi()    );
     mcE_     .push_back( p->energy() );
     mcEt_    .push_back( p->et()     );
