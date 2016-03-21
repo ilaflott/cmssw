@@ -1,3 +1,17 @@
+(3/21/16, 9:00 am):
+
+USAGE: Should compile with the standard setup described on https://twiki.cern.ch/twiki/bin/view/CMS/HiForestSetup#Setup_for_7_5_X
+Should be something as follows
+
+cmsrel CMSS_7_5_8
+cd CMSSW_7_5_8/src
+git cms-merge-topic -u CmsHI:forest_CMSSW_7_5_8
+<replace current HeavyIonsAnalysis/MuonAnalysis w/ my HeavyIonsAnalysis/MuonAnalysis, however you prefer>
+scram b -j4
+cd HeavyIonsAnalysis/JetAnalysis/test
+<add plug-in to runForestAOD_pp_DATA_75X.py, see my HeavyIonsAnalysis/JetAnalysis/test/runForestAOD_pp_DATA_75X.py L154 and L208 for example implementation>
+cmsRun runForest_AOD_pp_Data_75x.py
+
 (3/18/16, 3:00 pm):
 
 renamed plugin (ggHiNtuplizerMuTree -> muonTree), changed runForest scripts to explicitly include default values of inputTag fields, changed runForest script output root file title, changed all maxEvent fields to 10 for brevity of cmsRun test, added muonTree-specific runtest file in HeavyIonsAnalysis/JetAnalysis/test. Initial compilation+cmsRun tests on AOD seem normal (pp DATA, pp MC, PbPb Data, not PbPb MB nor PbPb MIX {note to self, MB and MIX are MC}). for the cmsRun test log files, see HeavyIonsAnalysis/JetAnalysis/test.
