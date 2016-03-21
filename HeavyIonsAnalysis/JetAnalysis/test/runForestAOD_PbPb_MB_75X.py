@@ -26,7 +26,8 @@ process.HiForest.HiForestVersion = cms.string(version)
 process.source = cms.Source("PoolSource",
                             duplicateCheckMode = cms.untracked.string("noDuplicateCheck"),
                             fileNames = cms.untracked.vstring(
-                                "file:samples/PbPb_MC_RECODEBUG.root"
+                                #"file:samples/PbPb_MC_RECODEBUG.root"
+"/store/himc/HINPbPbWinter16DR/Pythia8_bJet50_Hydjet_MB/AODSIM/75X_mcRun2_HeavyIon_v13-v1/10000/02E72350-9FE4-E511-9113-00A0D1EE26D0.root"
                                 )
                             )
 
@@ -135,6 +136,21 @@ process.ggHiNtuplizerGED = process.ggHiNtuplizer.clone(recoPhotonSrc = cms.Input
 
 #####################################################################################
 
+#####################
+# Muons
+#####################
+
+process.load('HeavyIonsAnalysis.MuonAnalysis.muonTree_cfi')
+process.muonTree.doGenParticles   = cms.bool(False)                
+process.muonTree.runOnParticleGun = cms.bool(False)                
+process.muonTree.pileupCollection = cms.InputTag("addPileupInfo")  
+process.muonTree.genParticleSrc   = cms.InputTag("genParticles")   
+process.muonTree.recoMuonSrc      = cms.InputTag("muons")          
+process.muonTree.VtxLabel  = cms.InputTag("offlinePrimaryVertices")
+##process.muonTree.beamSpot  = cms.InputTag("offlineBeamSpot")
+##process.muonTree.particleFlowCollection = cms.InputTag("particleFlow")
+
+####################################################################################
 
 #####################
 # tupel and necessary PAT sequences
@@ -161,6 +177,7 @@ process.ana_step = cms.Path(
                             process.jetSequences +
                             process.ggHiNtuplizer +
                             process.ggHiNtuplizerGED +
+                            process.muonTree +
                             process.pfcandAnalyzer +
                             process.HiForest +
                             process.trackSequencesPbPb #+

@@ -1,8 +1,5 @@
 export SCRAM_ARCH="slc6_amd64_gcc491" 
 
-echo 'sourcing cms software'
-source "$VO_CMS_SW_DIR/cmsset_default.sh"
-
 echo 'cmsenv'
 cmsenv
 
