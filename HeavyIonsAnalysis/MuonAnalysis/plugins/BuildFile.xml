@@ -11,6 +11,6 @@
 <use   name="CommonTools/UtilAlgos"/>
 <use   name="CLHEP"/>
 <use   name="root"/>
-<flags EDM_PLUGIN="1"/>
-<library name="MuonAnalysis" file="*.cc">
+<library file="*.cc" name="MuonAnalysisPlugins">
+  <flags EDM_PLUGIN="1"/>
 </library>
