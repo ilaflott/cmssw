@@ -1,3 +1,17 @@
+(4/18/16, 12:15 pm):
+
+minPt, min/maxAbsEta fields added to MuonAnalysis/python/muonTree_cfi.py. They have default values of 1, 0, and 100 respectively. 
+
+BuildFile.xml files were what I had from the PhotonAnalysis folder and it was time to fix them and make them specific for MuonAnalysis.
+I used the buildfiles in cmssw/MuonAnalysis/MomentumScaleCalibration and cmssw/MuonAnalysis/MomentumScaleCalibration/plugins as templates for reference, since the BuildFile twiki intro didn't make a whole lot of confusions I was having very clear. What i changed was the following:
+
+redundant/unnecessary library dependencies in BuildFile.xml in MuonAnalysis/plugins have been removed
+BuildFile.xml added to MuonAnalysis, all it does is define the library name since there's no global MuonAnalysis utilities. 
+
+did a scram b clean and a scram b -j8 from $CMSSW_BASE/src to check that changes are compatible with forest compilation from scratch.
+ran several hundred events to verify behavior of cuts as expected.
+USAGE instructions in entry below (3/21/16) have no changed.
+
 (3/21/16, 9:00 am):
 
 USAGE: Should compile with the standard setup described on https://twiki.cern.ch/twiki/bin/view/CMS/HiForestSetup#Setup_for_7_5_X
