@@ -4,6 +4,7 @@ muonTree = cms.EDAnalyzer(
     "muonTree",
     doGenParticles     = cms.bool(False),
     runOnParticleGun   = cms.bool(False),
+    TrkAndGlbMusOnly   = cms.bool(True),
     minPt     = cms.double(1.0),
     minAbsEta = cms.double(0.0),
     maxAbsEta = cms.double(100.0),

@@ -49,6 +49,7 @@ class muonTree : public edm::EDAnalyzer {
    // input parameters
    bool doGenParticles_   ;
    bool runOnParticleGun_ ;
+   bool TrkAndGlbMusOnly_ ;
    float minPt_     ;
    float minAbsEta_ ;
    float maxAbsEta_ ;
