@@ -46,9 +46,12 @@ class muonTree : public edm::EDAnalyzer {
    //edm::EDGetTokenT<edm::View<reco::PFCandidate> >    pfCollection_;
    //edm::EDGetTokenT<reco::BeamSpot>                   beamSpotToken_;
 
-   // switches
+   // input parameters
    bool doGenParticles_   ;
    bool runOnParticleGun_ ;
+   float minPt_     ;
+   float minAbsEta_ ;
+   float maxAbsEta_ ;
 
    TTree*         tree_ ;
 

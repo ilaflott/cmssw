@@ -17,6 +17,9 @@ muonTree::muonTree(const edm::ParameterSet& ps)
   // class instance configuration
   doGenParticles_         = ps.getParameter<bool>("doGenParticles");
   runOnParticleGun_       = ps.getParameter<bool>("runOnParticleGun");
+  minPt_                  = ps.getParameter<double>("minPt");
+  minAbsEta_              = ps.getParameter<double>("minAbsEta");
+  maxAbsEta_              = ps.getParameter<double>("maxAbsEta");
   genPileupCollection_    = consumes<vector<PileupSummaryInfo> >   (ps.getParameter<edm::InputTag>("pileupCollection"));
   genParticlesCollection_ = consumes<vector<reco::GenParticle> >   (ps.getParameter<edm::InputTag>("genParticleSrc"));
   recoMuonsCollection_    = consumes<edm::View<reco::Muon> >       (ps.getParameter<edm::InputTag>("recoMuonSrc"));
@@ -171,7 +174,7 @@ void muonTree::analyze(const edm::Event& e, const edm::EventSetup& es)
       vtx= *v;
       break;
     }
-
+  
   fillMuons(e, es, (const reco::Vertex) vtx); 
 
   tree_->Fill();
@@ -432,13 +435,13 @@ void muonTree::fillMuons(const edm::Event& e, const edm::EventSetup& es, const r
     //implement muon selection
     bool isSelected =  
       ( mu->isPFMuon() || mu->isGlobalMuon() || mu->isTrackerMuon() || mu->isStandAloneMuon() )
-      && ( mu->pt()>0 ) ; 
+      && ( mu->pt()>=minPt_ && fabs(mu->eta())>=minAbsEta_ && fabs(mu->eta())<=maxAbsEta_ ) ; 
                          
     muIsSelected_ .push_back( (int) isSelected );
     
     if( !isSelected ) continue; 
 
-    std::cout << "hello world, I have found a muon" << std::endl; /*debug*/
+    //std::cout << "hello world, I have found a muon" << std::endl; /*debug*/
     
     //selection+quality flags 
     muIsLoose_  .push_back( (int) muon::isLooseMuon(*mu )     );

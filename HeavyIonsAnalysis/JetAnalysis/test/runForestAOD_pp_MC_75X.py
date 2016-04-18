@@ -33,8 +33,8 @@ process.source = cms.Source("PoolSource",
 
 # Number of events we want to process, -1 = all events
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(-1))
-
+#    input = cms.untracked.int32(-1)) #actual run
+    input = cms.untracked.int32(10)) #test
 
 #####################################################################################
 # Load Global Tag, Geometry, etc.
@@ -60,7 +60,7 @@ process = overrideJEC_pp5020(process)
 #####################################################################################
 
 process.TFileService = cms.Service("TFileService",
-                                   fileName=cms.string("HiForestAOD_pp_MC.root"))
+                                   fileName=cms.string("HiForestAOD_jetsAndMuons_pp_MC.root"))
 
 #####################################################################################
 # Additional Reconstruction and Analysis: Main Body
@@ -73,6 +73,7 @@ process.TFileService = cms.Service("TFileService",
 #############################
 
 process.load("HeavyIonsAnalysis.JetAnalysis.FullJetSequence_nominalPP")
+#process.genParticlesForJets.ignoreParticleIDs+=[12,14,16] #is this something I want?
 
 # Use this version for JEC
 # process.load("HeavyIonsAnalysis.JetAnalysis.FullJetSequence_JECPP")
@@ -115,20 +116,20 @@ process.load('HeavyIonsAnalysis.JetAnalysis.TrkAnalyzers_cff')
 
 #####################################################################################
 
-#####################
-# photons
 ######################
-process.load('HeavyIonsAnalysis.PhotonAnalysis.ggHiNtuplizer_cfi')
-process.ggHiNtuplizer.gsfElectronLabel   = cms.InputTag("gedGsfElectrons")
-process.ggHiNtuplizer.recoPhotonHiIsolationMap = cms.InputTag('photonIsolationHIProducerpp')
-process.ggHiNtuplizer.VtxLabel           = cms.InputTag("offlinePrimaryVertices")
-process.ggHiNtuplizer.particleFlowCollection = cms.InputTag("particleFlow")
-process.ggHiNtuplizer.doVsIso            = cms.bool(False)
-process.ggHiNtuplizer.doElectronVID      = cms.bool(True)
-#process.ggHiNtuplizerGED = process.ggHiNtuplizer.clone(recoPhotonSrc = cms.InputTag('gedPhotons'),
-#                                                       recoPhotonHiIsolationMap = cms.InputTag('photonIsolationHIProducerppGED'))
-
-####################################################################################
+## photons
+#######################
+#process.load('HeavyIonsAnalysis.PhotonAnalysis.ggHiNtuplizer_cfi')
+#process.ggHiNtuplizer.gsfElectronLabel   = cms.InputTag("gedGsfElectrons")
+#process.ggHiNtuplizer.recoPhotonHiIsolationMap = cms.InputTag('photonIsolationHIProducerpp')
+#process.ggHiNtuplizer.VtxLabel           = cms.InputTag("offlinePrimaryVertices")
+#process.ggHiNtuplizer.particleFlowCollection = cms.InputTag("particleFlow")
+#process.ggHiNtuplizer.doVsIso            = cms.bool(False)
+#process.ggHiNtuplizer.doElectronVID      = cms.bool(True)
+##process.ggHiNtuplizerGED = process.ggHiNtuplizer.clone(recoPhotonSrc = cms.InputTag('gedPhotons'),
+##                                                       recoPhotonHiIsolationMap = cms.InputTag('photonIsolationHIProducerppGED'))
+#
+######################################################################################
 
 #####################
 # Muons

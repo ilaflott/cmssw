@@ -5,6 +5,7 @@ import FWCore.ParameterSet.Config as cms
 from RecoJets.JetProducers.ak5PFJets_cfi import ak5PFJets
 ak5PFJets.doAreaFastjet = True
 ak3PFJets = ak5PFJets.clone(rParam = 0.3)
+
 from RecoJets.JetProducers.ak5GenJets_cfi import ak5GenJets
 ak3GenJets = ak5GenJets.clone(rParam = 0.3)
 
